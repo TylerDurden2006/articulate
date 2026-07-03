@@ -315,6 +315,7 @@ fn get_weak_words(db: tauri::State<Database>) -> Result<Vec<WeakWord>, String> {
 fn seed_word_list(db: tauri::State<Database>) -> Result<i64, String> {
     let word_list = include_str!("../../top_5000_english_words.txt");
     let conn = db.conn.lock().map_err(|e| e.to_string())?;
+    conn.execute("DELETE FROM words", []).map_err(|e| e.to_string())?;
     let mut count = 0i64;
     for (i, line) in word_list.lines().enumerate() {
         let word = line.trim().to_lowercase();

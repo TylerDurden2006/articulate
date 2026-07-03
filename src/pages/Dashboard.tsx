@@ -16,7 +16,6 @@ import { getStats, seedWordList, seedWordSenses, backupDatabase, getBackups } fr
 import { useStore } from "@/lib/store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import type { DashboardStats, BackupInfo } from "@/lib/api";
 
@@ -42,7 +41,7 @@ export default function Dashboard() {
       if (s.total_words === 0 && !seeded) {
         setSeeding(true);
         const count = await seedWordList();
-        const senseCount = await seedWordSenses();
+        await seedWordSenses();
         setSeeded(true, count);
         const s2 = await getStats();
         setLocalStats(s2);
