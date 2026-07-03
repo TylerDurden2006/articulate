@@ -53,8 +53,8 @@ export async function getWordDetail(wordId: number): Promise<WordDetail> {
   return invoke("get_word_detail", { wordId });
 }
 
-export async function searchWords(query: string): Promise<Word[]> {
-  return invoke("search_words", { query });
+export async function searchWords(query: string, limit?: number, offset?: number): Promise<Word[]> {
+  return invoke("search_words", { query, limit, offset });
 }
 
 export async function recordReview(wordId: number, rating: number, elapsedMs = 0): Promise<void> {

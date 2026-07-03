@@ -119,13 +119,23 @@ fn get_word_detail(db: tauri::State<Database>, word_id: i64) -> Result<WordDetai
 }
 
 #[tauri::command]
-fn search_words(db: tauri::State<Database>, query: String) -> Result<Vec<Word>, String> {
+fn search_words(
+    db: tauri::State<Database>,
+    query: String,
+    limit: Option<i64>,
+    offset: Option<i64>,
+) -> Result<Vec<Word>, String> {
     let conn = db.conn.lock().map_err(|e| e.to_string())?;
     let pattern = format!("%{}%", query);
+    let l = limit.unwrap_or(50);
+    let o = offset.unwrap_or(0);
     let mut stmt = conn.prepare(
-        "SELECT id, word, rank, tier, due_date FROM words WHERE word LIKE ?1 ORDER BY rank ASC LIMIT 50"
+        "SELECT id, word, rank, tier, due_date FROM words 
+         WHERE word LIKE ?1 
+         ORDER BY rank ASC 
+         LIMIT ?2 OFFSET ?3"
     ).map_err(|e| e.to_string())?;
-    let words = stmt.query_map(params![pattern], |row| {
+    let words = stmt.query_map(params![pattern, l, o], |row| {
         Ok(Word {
             id: row.get(0)?,
             word: row.get(1)?,
